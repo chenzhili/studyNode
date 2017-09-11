@@ -29,7 +29,7 @@ function travelSync(dir, callback) {
         let pathname = path.join(dir, file);
 
         if (fs.statSync(pathname).isDirectory()) {
-            travel(pathname, callback);
+            travelSync(pathname, callback);
         } else {
             callback(pathname);
         }

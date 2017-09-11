@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/chenzhili/studyNode/issues"
   },
-  "homepage": "https://github.com/chenzhili/studyNode#readme"
+  "homepage": "https://github.com/chenzhili/studyNode#readme",
+  "devDependencies": {
+    "glob": "^7.1.2"
+  }
 }

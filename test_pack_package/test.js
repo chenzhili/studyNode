@@ -71,7 +71,7 @@ function writeFile(file,data){
     });
 }
 
-readDir(absoluteUrl+"\\"+"reset-toolbar");
+readDir(absoluteUrl+"\\"+"img");
 function readDir(fileDir){
     fs.readdir(fileDir,function(err,files){
         if(err) return console.log(err);
@@ -83,7 +83,7 @@ function readDir(fileDir){
                 }else{
                     if(/(\.jpg|\.png)$/i.test(filePath)){
                         /*做操作*/
-                        console.log(filePath);
+                        /*console.log(filePath);*/
                     }
                 }
             })
