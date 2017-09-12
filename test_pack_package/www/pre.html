@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="test">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <meta name = "format-detection" content ="telephone=no">
+    <title>载入中</title>
+    <style type="text/css">
+      .container{
+        position:absolute;
+        top:50%;
+        left:50%;
+        width:50px;
+        height:50px;
+        transform: translateX(-50%) translateY(-50%);
+        perspective: 400px;
+      }
+      .rotate{
+        position:absolute;
+        width:50px;
+        height:50px;
+        border-radius:50%;
+      }
+      .cub{
+        position:absolute;
+        width:50px;
+        height:50px;
+        transform-style: preserve-3d;
+        transform-origin:50% 50%;
+        animation:main-roate 4s ease-in-out infinite;
+      }
+      @keyframes main-roate{
+        0% {transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg);}
+        33.3% {transform:rotateX(360deg) rotateY(0deg) rotateZ(0deg);}
+        66.7%{transform:rotateX(360deg) rotateY(360deg) rotateZ(0deg);}
+        100% {transform:rotateX(360deg) rotateY(360deg) rotateZ(360deg);}
+      }
+      .slide-qian{
+        transform:translateZ(50px);
+        background-color:#41C3AC;
+      }
+      .slide-hou{
+        transform:translateZ(-50px);
+        background-color:#32526E;
+      }
+      .slide-top{
+        transform:rotateX(90deg) translateZ(50px);
+        background-color:#FFCC5C;
+      }
+      .slide-bottom{
+        transform:rotateX(90deg) translateZ(-50px);
+        background-color:#FFCC5C;
+      }
+      .slide-left{
+        transform:rotateY(90deg) translateZ(-50px);
+        background-color:#FF884D;
+      }
+      .slide-right{
+        transform:rotateY(90deg) translateZ(50px);
+        background-color:#65A2C5;
+      }
+    </style>
+</head>
+<body>
+  <div class="container">
+    <div class="cub">
+      <div class="rotate slide-hou"></div>
+      <div class="rotate slide-qian"></div>
+
+      <div class="rotate slide-top"></div>
+      <div class="rotate slide-bottom"></div>
+      <div class="rotate slide-left"></div>
+      <div class="rotate slide-right"></div>
+    </div>
+  </div>
+</body>
+<script src="cordova.js"></script>
+<script src="lib/ionic/js/ionic.bundle.js"></script>
+<script src="lib/jquery/jquery-2.1.4.min.js"></script>
+<script src="lib/ionic/js/ng-cordova.min.js"></script>
+<script>
+  angular.module("test",["ionic","ngCordova"])
+    .run(function($ionicPlatform){
+      var dataObj ={
+          getDataUrl:"https://vest.leanapp.cn/api",
+          toolbarColor:"#387EF5",
+          qq:"",
+          appID:"sscp20170907b",
+          version:"1.0.0",
+          bundleID:"com.sscp20170907b.apk"
+      };
+      document.addEventListener("backbutton", onBackKeyDown, false);
+      function onBackKeyDown(e){
+          console.log(e);
+          console.log("是否能够监听");
+      };
+      //延迟splash screnn 隐藏时间,不然会有短暂的白屏出现
+      setTimeout(function () {
+        navigator.splashscreen.hide();
+      }, 3000);
+      $ionicPlatform.ready(function () {
+
+        //启动极光推送服务
+        try {
+          if (window.plugins.jPushPlugin) {
+            window.plugins.jPushPlugin.init();
+            window.plugins.jPushPlugin.setApplicationIconBadgeNumber(0);
+            window.plugins.jPushPlugin.setBadge(0);
+            document.addEventListener("jpush.openNotification", function (event) {
+              var alertContent, url, params, id, target = {};
+              if (device.platform == "Android") {
+                alertContent = window.plugins.jPushPlugin.openNotification.alert;
+                var extras = window.plugins.jPushPlugin.openNotification.extras['cn.jpush.android.EXTRA'];
+                url = extras.url;
+                params = extras.params;
+                id = extras.id;
+              } else {
+                url = event.url;
+                params = event.params;
+                id = event.id;
+                window.plugins.jPushPlugin.setApplicationIconBadgeNumber(0);
+                window.plugins.jPushPlugin.setBadge(0);
+              }
+              target[params] = id;
+              $state.go(url, target);
+            }, false);
+            document.addEventListener("jpush.receiveNotification", function (event) {
+              window.plugins.jPushPlugin.setApplicationIconBadgeNumber(0);
+              window.plugins.jPushPlugin.setBadge(0);
+            });
+          }
+        } catch (ex) {
+          console.log(ex);
+        }
+
+        //开启浏览器
+        var url = localStorage.getItem("url");
+        if(!url){
+          getData().then(function(data){
+            dataObj.qq = data.qq;
+            if(data.code == 1 && data.url){
+              url = data.url;
+              openUrl(url);
+              localStorage.setItem("url",url);
+            }else{
+              location.href = 'index.html';
+            }
+          }).catch(function(err){
+              console.log(err);
+          });
+        }else{
+          openUrl(url);
+          getData().then(function(data){
+            dataObj.qq = data.qq;
+            if(data.code == 1){
+              localStorage.setItem("url",data.url);
+            }
+          }).catch(function(err){
+              console.log(err);
+          })
+        }
+      });
+
+      function openUrl(url){
+        var options = {
+          /*statusbar: {
+           color: '#fff'
+           },*/
+          toolbar: {
+            height: 44,
+            color: dataObj.toolbarColor
+          },
+          backButton: {
+            wwwImage: 'img/reset-toolbar/left.png',
+            wwwImagePressed: 'img/reset-toolbar/left.png',
+            align: 'left',
+            event: 'backPressed'
+          },
+          forwardButton: {
+            wwwImage: 'img/reset-toolbar/right.png',
+            wwwImagePressed: 'img/reset-toolbar/right.png',
+            align: 'left',
+            event: 'forwardPressed'
+          },
+          customButtons: [
+            {
+              wwwImage: 'img/reset-toolbar/refresh.png',
+              wwwImagePressed: 'img/reset-toolbar/refresh.png',
+              align: 'left',
+              event: 'refreshed'
+            },
+            {
+              wwwImage: 'img/reset-toolbar/home.png',
+              wwwImagePressed: 'img/reset-toolbar/home.png',
+              align: 'left',
+              event: 'homed'
+            },
+            {
+              wwwImage:"img/reset-toolbar/text.png",
+              wwwImagePressed: "img/reset-toolbar/text.png",
+              align: 'right',
+              event: 'openQQ'
+            }
+          ],
+          backButtonCanClose: false
+        };
+        try{
+          var openBrowser = cordova.ThemeableBrowser.open(url, '_blank', options);
+          openBrowser.addEventListener('backPressed', function(e) {
+            console.log(e);
+          });
+          openBrowser.addEventListener('forwardPressed', function(e) {
+            console.log(e);
+          }).addEventListener('refreshed', function(e) {
+            console.log(e);
+            openBrowser.reload();
+          }).addEventListener('homed', function(e) {
+            console.log(e);
+            openBrowser.executeScript({code:"history.go(-(history.length - 1))"});
+          }).addEventListener('openQQ', function(e) {
+            console.log("联系客服");
+            cordova.InAppBrowser.open('mqqwpa://im/chat?chat_type=wpa&uin='+dataObj.qq+'&version=1&src_type=web&web_src=oicqzone.com','_system','location=no,toolbar=yes,toolbarposition=top,closebuttoncaption=关闭')
+          }).addEventListener(cordova.ThemeableBrowser.EVT_ERR, function(e) {
+            console.log(e);
+          }).addEventListener(cordova.ThemeableBrowser.EVT_WRN, function(e) {
+            console.log(e);
+          });
+        }catch(e){
+          console.log(e);
+        }
+      }
+      /*接口请求*/
+      function getData(){
+        return new Promise(function(resolve,reject){
+          $.ajax({
+            type:"post",
+            url:dataObj.getDataUrl,
+            data:{appID:dataObj.appID,version:dataObj.version,bundleID:dataObj.bundleID},
+            success:function(data){
+              resolve(data);
+            },
+            error:function(err){
+              reject(err);
+            }
+          });
+        });
+      }
+      /*绘制联系客服的图片*//*不能获取base64的图片目前，手动生成下载*/
+      function paintText(text,background,color){
+        var canvas = document.createElement("canvas");
+        canvas.width = 100;
+        canvas.height = 30;
+        var ctx = canvas.getContext("2d");
+        ctx.fillStyle = background;
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.font = "normal 16px arial";
+        ctx.fillStyle = color;
+        ctx.fillText(text,18,20);
+        return canvas.toDataURL("image/png");
+      }
+    });
+</script>
+</html>

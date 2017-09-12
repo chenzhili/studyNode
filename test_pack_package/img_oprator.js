@@ -1,5 +1,4 @@
-let glob=require('glob'),
-    fs=require('fs')
+let fs=require('fs');
 /*
 let url='img/home.png'
 let rs=fs.readFileSync(url,{encoding:'hex',flag:'r'});
