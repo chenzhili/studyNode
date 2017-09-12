@@ -142,6 +142,7 @@ Package.prototype.reviseFileContent = function(file,judgeFile){
 };
 /*添加android平台,打包并且签名*/
 /*这里少了一步生成对应的 icon 和 splash 资源*/
+/*还有对应的 极光推送资源也没删除添加*/
 Package.prototype.addPlatformAndPacking = function(){
     fs.readdir(absoluteUrl,(err,files)=>{
         if(regExp.isPlatform.test(files.join(","))){
