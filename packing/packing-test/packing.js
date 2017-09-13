@@ -5,7 +5,9 @@ let fs = require('fs');
 let execSync = require('child_process').execSync;
 
 let absoluteUrl = process.cwd();/*如果需要这个当前目录的绝对路径的时候用*/
-
+/**
+ * 这是个用来 一条命令 打包android的开发过程
+ */
 /*要修改的文件内容的url*/
 let reviseUrl = {
     config:"config.xml", /*这是用于修改包名之类的*/

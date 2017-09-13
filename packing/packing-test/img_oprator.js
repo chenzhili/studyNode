@@ -9,6 +9,11 @@ glob('dist/right.png',(err,files)=>{
     console.log(files);
     files.forEach(write)
 });*/
+/**
+ * 这是为了在不改变原图片名字的情况下，修改图片资源
+ * @param url
+ * @param dist
+ */
 function copy(url,dist){
     let rs = fs.readFileSync(url,{encoding:'hex',flag:'r'});
     /*glob(dist,(err,data)=>{
