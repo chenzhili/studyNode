@@ -4,20 +4,29 @@
 let fs = require("fs");
 let path = require("path");
 let absoluteUrl = process.cwd();
-function copy(){
+/*这个属于小文件的拷贝*/
+/*原理是一次性读取所有的文件存入到内存中，然后一次性拷贝到对应的目标文件中*/
+function smallCopy(){
     fs.readdir("../cat",(err,files)=>{
         files.forEach((file)=>{
             let fileUrl = path.join("../cat",file);
             if(fs.statSync(fileUrl).isDirectory()){
-                copy();
+                smallCopy();
             }else{
                 fs.readFile(fileUrl,(err,data)=>{
-                    fs.writeFile(absoluteUrl,data,(err)=>{
+                    fs.writeFile(absoluteUrl+"/"+file,data,(err)=>{
                         if(err)console.log(err);
+                        console.log("copy success");
                     });
                 })
             }
         });
     });
 }
-copy();
+/*大型文件的拷贝，运用事件流，读一点写一点的方式*/
+function bigCopy(){
+    let a = fs.createReadStream("../cat/a1.js");/*.pipe(fs.createWriteStream(absoluteUrl+"/cat.js"));*/
+    a.on("data",function(){});
+
+}
+bigCopy();
