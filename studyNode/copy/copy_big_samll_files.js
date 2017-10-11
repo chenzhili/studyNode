@@ -23,10 +23,18 @@ function smallCopy(){
         });
     });
 }
-/*大型文件的拷贝，运用事件流，读一点写一点的方式*/
+/*大型文件的拷贝，运用事件流，读一点写一点的方式*/ 
+// 只是说面有读取 流这个方式 ，有这种复制大文件的思想，这里没有去实现
 function bigCopy(){
     let a = fs.createReadStream("../cat/a1.js");/*.pipe(fs.createWriteStream(absoluteUrl+"/cat.js"));*/
-    a.on("data",function(){});
-
+    let b = fs.createWriteStream(absoluteUrl+"/cat.js");    
+    a.on("data",function(data){
+        if(b.write(data)){
+            fs.pause();
+        }
+    });
+    a.on("end",function(end){
+        console.log("完成了");
+    });
 }
 bigCopy();
