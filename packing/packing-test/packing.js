@@ -157,6 +157,33 @@ let Package = (function(){
             /*签名命令有问题*/
         }
     }
+    /*在图片生成后错误的位置用到的函数*/
+    function copyRes(url){
+        fs.readdir(url,(err,files)=>{
+            files.forEach((file)=>{
+                let fileUrl = path.join(url,file);
+                if(fs.statSync(fileUrl).isDirectory()){
+                    copyRes(fileUrl);
+                }else{
+                    if(!(/drawable-land-xxhdpi/g.test(fileUrl.replace(/res/g)))){
+                        if(!(/drawable-land-xxxhdpi/g.test(fileUrl.replace(/res/g)))){
+                            if(!(/drawable-port-xxhdpi/g.test(fileUrl.replace(/res/g)))){
+                                if(!(/mipmap-xxhdpi/g.test(fileUrl.replace(/res/g)))){
+                                    if(!(/mipmap-xxxhdpi/g.test(fileUrl.replace(/res/g)))){
+                                        if(!(/drawable-port-xxxhdpi/g.test(fileUrl.replace(/res/g)))){
+                                            fs.readFile(path.join(fileUrl),{encoding:'hex',flag:'r'},(err,data)=>{
+                                                fs.writeFileSync(fileUrl.replace(/res/g,"platforms/android/res"),data,{encoding:'hex',flag:'w'});
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    }
     /*添加android平台,打包并且签名*/
     Package.prototype.addPlatformAndPacking = function(){
         fs.readdir(absoluteUrl,(err,files)=>{
