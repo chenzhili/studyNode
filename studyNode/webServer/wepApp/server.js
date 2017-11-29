@@ -4,14 +4,43 @@
 const http = require("http");
 const url = require("url");
 
-function start(){
+function start(route,handle){
     http.createServer((request,response)=>{
         let pathname = url.parse(request.url).pathname;
-        console.log(pathname);
-        console.log(request.url);
-        response.writeHead(200,{"Content-Type":"text/plain"});
-        response.write("hello world");
-        response.end();
+
+        /*路由的管理方法以 依赖注入的方式*/
+        /*if(pathname != "/favicon.ico"){
+            if(request.method == "GET"){
+                route(handle,pathname,response);
+            }
+            if(request.method == "POST"){
+                request.setEncoding("utf-8");
+
+                request.addListener("data",data=>{
+                    console.log(data);
+                });
+                request.addListener("end",()=>{
+                    /!*路由的管理方法以 依赖注入的方式*!/
+                    if(pathname != "/favicon.ico"){
+                        route(handle,pathname,response);
+                    }
+                })
+            }
+        }*/
+        let content;
+        if(pathname != "/favicon.ico"){
+            request.setEncoding("utf-8");
+
+            request.addListener("data",data=>{
+                console.log(data);
+                content += data;
+            });
+            request.addListener("end",()=>{
+                console.log("是不是都能监听");
+                /*路由的管理方法以 依赖注入的方式*/
+                route(handle,pathname,response);
+            })
+        }
     }).listen(8989);
 }
 /*module.exports=start;*//*这种写法，可以把文件输出进行 重写为 start*/
