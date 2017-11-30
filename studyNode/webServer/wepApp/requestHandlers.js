@@ -2,7 +2,8 @@
  * Created by YK on 2017/11/29.
  */
 const exec = require("child_process").exec;
-function start(response){
+const querystring = require("querystring");
+function start(response,content){
     // function sleep(t){
     //     let time = new Date().getTime();
     //     while(new Date().getTime() < time +t);
@@ -35,10 +36,12 @@ function start(response){
     response.write(body);
     response.end();
 }
-function upload(response){
+function upload(response,content){
     response.writeHead(200, {"Content-Type": "text/plain"});
-    response.write("Hello Upload");
+    response.write(querystring.parse(content).text);
     response.end();
+    //这个写法只是为了 在 路由模块里 实现一种表达方式而已
+    return true;
 }
 module.exports = {
     start:start,

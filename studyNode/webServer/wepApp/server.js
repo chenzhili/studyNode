@@ -27,18 +27,17 @@ function start(route,handle){
                 })
             }
         }*/
-        let content;
+        let content = "";
         if(pathname != "/favicon.ico"){
             request.setEncoding("utf-8");
 
             request.addListener("data",data=>{
-                console.log(data);
-                content += data;
+                content += data;/*这个只要传入的内容比较多的时候才会多次触发，不然只会触发一次就完成了*/
             });
             request.addListener("end",()=>{
                 console.log("是不是都能监听");
                 /*路由的管理方法以 依赖注入的方式*/
-                route(handle,pathname,response);
+                route(handle,pathname,response,content);
             })
         }
     }).listen(8989);
