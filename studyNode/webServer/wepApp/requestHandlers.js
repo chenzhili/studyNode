@@ -3,7 +3,10 @@
  */
 const exec = require("child_process").exec;
 const querystring = require("querystring");
-function start(response,content){
+const fs = require("fs");
+const formidable = require("formidable");
+const path = require("path");
+function start(response){
     // function sleep(t){
     //     let time = new Date().getTime();
     //     while(new Date().getTime() < time +t);
@@ -25,9 +28,11 @@ function start(response,content){
         'charset=UTF-8" />'+
         '</head>'+
         '<body>'+
-        '<form action="/upload" method="post">'+
+        '<form action="/upload" enctype="multipart/form-data" method="post">'+
         '<textarea name="text" rows="20" cols="60"></textarea>'+
-        '<input type="submit" value="Submit text" />'+
+        '<input name="username" />'+
+        '<input type="file" accept="image/*" name="file">'+
+        '<input type="submit" />'+
         '</form>'+
         '</body>'+
         '</html>';
@@ -36,16 +41,46 @@ function start(response,content){
     response.write(body);
     response.end();
 }
-function upload(response,content){
-    response.writeHead(200, {"Content-Type": "text/plain"});
-    response.write(querystring.parse(content).text);
-    response.end();
+function upload(response,request){
+    //使用插件
+    let form = new formidable.IncomingForm();
+    //这个步骤很重要了，允许下面磁盘跨区 和 权限的 解决
+    form.uploadDir='tmp';
+    form.parse(request,(err,fields,files)=>{  //这个会将 文件存在 临时文件夹下，需要把它 提到我的项目中来
+        console.log("parsing done");
+        /*fields 中的是 除了 文件类型的其他 提交的 form 数据 ，（key,value）的形式*/
+        fs.renameSync(files.file.path, path.join(__dirname,"tmp/test.png"));
+        response.writeHead(200, {"Content-Type": "text/html"});
+        response.write("received image:<br/>");
+        response.write("<img src='/show' style='width:100px;height:100px;' />");
+        response.end();
+    });
+    //这个是实验用的
+    /*response.writeHead(200, {"Content-Type": "text/plain"});
+    console.log(querystring.parse(content));
+    response.write("hello world");
+    response.end();*/
     //这个写法只是为了 在 路由模块里 实现一种表达方式而已
     return true;
 }
+function show(response){
+    console.log("Request handler 'show' was called.");
+    fs.readFile(path.join(__dirname,"tmp/test.png"), "binary", function(error, file) {
+        if(error) {
+            response.writeHead(500, {"Content-Type": "text/plain"});
+            response.write(error + "\n");
+            response.end();
+        } else {
+            response.writeHead(200, {"Content-Type": "image/png"});
+            response.write(file, "binary");
+            response.end();
+        }
+    });
+}
 module.exports = {
     start:start,
-    upload:upload
+    upload:upload,
+    show:show
 };
 
 /**

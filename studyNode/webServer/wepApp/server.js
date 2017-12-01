@@ -3,43 +3,44 @@
  */
 const http = require("http");
 const url = require("url");
+const querystring = require("querystring");
 
 function start(route,handle){
     http.createServer((request,response)=>{
         let pathname = url.parse(request.url).pathname;
 
         /*路由的管理方法以 依赖注入的方式*/
-        /*if(pathname != "/favicon.ico"){
-            if(request.method == "GET"){
+        if(pathname != "/favicon.ico"){
+            if(request.method.toLowerCase() == "get"){
                 route(handle,pathname,response);
             }
-            if(request.method == "POST"){
-                request.setEncoding("utf-8");
-
+            if(request.method.toLowerCase() == "post"){
+                route(handle,pathname,response,request);
+                /*request.setEncoding("utf-8");
+                let content = "";
                 request.addListener("data",data=>{
-                    console.log(data);
+                    content +=data;
                 });
                 request.addListener("end",()=>{
                     /!*路由的管理方法以 依赖注入的方式*!/
-                    if(pathname != "/favicon.ico"){
-                        route(handle,pathname,response);
-                    }
-                })
+                    route(handle,pathname,response,content,request);
+                })*/
+
             }
-        }*/
-        let content = "";
+        }
+        /*let content = "";
         if(pathname != "/favicon.ico"){
             request.setEncoding("utf-8");
 
             request.addListener("data",data=>{
-                content += data;/*这个只要传入的内容比较多的时候才会多次触发，不然只会触发一次就完成了*/
+                content += data;/!*这个只要传入的内容比较多的时候才会多次触发，不然只会触发一次就完成了*!/
             });
             request.addListener("end",()=>{
                 console.log("是不是都能监听");
-                /*路由的管理方法以 依赖注入的方式*/
+                /!*路由的管理方法以 依赖注入的方式*!/
                 route(handle,pathname,response,content);
             })
-        }
+        }*/
     }).listen(8989);
 }
 /*module.exports=start;*//*这种写法，可以把文件输出进行 重写为 start*/
