@@ -26,3 +26,8 @@ fs.readFile("./readme.md","utf-8",(err,data)=>{
     console.log(data);
 });
 fs.writeFileSync("./write.md",text);
+
+console.log(__dirname);
+console.log(__filename);
+const path = require("path");
+console.log(path.dirname(__filename));
