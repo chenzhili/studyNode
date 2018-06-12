@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ajax</title>
+</head>
+
+<body>
+    name:
+    <input type="text" id="user">
+    <br/> pwd
+    <input type="password" id="pwd">
+    <br/>
+    <button type="button" id="login">登录</button>
+    <button id="reg">注册</button>
+    <script>
+        let ajax = (url) => {
+            let xhr = new XMLHttpRequest();
+            let u = `http://127.0.0.1:3030${url}`;
+            console.log(u);
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    console.log(xhr.responseText);
+                }
+            }
+            xhr.open("GET",u, true);
+            // xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.send();
+        }
+        window.onload = ()=>{
+            var user = document.getElementById("user");
+            var pwd = document.getElementById("pwd");
+            var login = document.getElementById("login");
+            var reg = document.getElementById("reg");
+            login.addEventListener("click",()=>{
+                let userValue = user.value;
+                
+                let pwdValue = pwd.value;
+                ajax("/user?act=login&user="+userValue+"&pass="+pwdValue);
+            });
+            reg.addEventListener("click",()=>{
+                let userValue = user.value;
+                
+                let pwdValue = pwd.value;
+                ajax("/user?act=reg&user="+userValue+"&pass="+pwdValue);
+            });
+        }
+    </script>
+</body>
+
+</html>
