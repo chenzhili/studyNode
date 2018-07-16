@@ -9,3 +9,9 @@ Timers 定时器
 ZLIB 压缩的
 
 UDP/Datagram 跟tcp 差不多，数据传输协议
+
+npm 的一些 补充
+npm login
+npm init
+npm publish //上传到 npmjs.com上，其他人使用,init是必须的
+npm --force publish // 删除上传的包
