@@ -26,3 +26,14 @@ server.use((req,res,next)=>{
 
     next();
 });
+
+2018/7/17
+1、cookie
+    cookie-parser
+    发送：是 express 自带 就可以发送 res.cookie()
+    读取:需要用到上面的中间件，并且可以 冒泡到他的所有祖先上  可以 访问，其他不行 
+2、session
+    cookie-session
+
+    session的理解：是基于 cookie
+    其实 session 是 存于 后台 并且跟前台有所 交互的 一个数据，他其实 是变向的 cookie，在客户端只是 存储了 一个有关的 sessionid 以及 对于这个 id的 签名 数据，不存在真是的数据，后台得到 这个数据在 进行解析判断 看是否有更改；
