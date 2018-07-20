@@ -6,16 +6,113 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>socket.io测试</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        .mess-container {
+            position: fixed;
+            z-index: 99;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 40px;
+            width: 100%;
+            background: rgba(82, 146, 249, .3);
+            overflow: scroll;
+        }
+
+        .item {
+            line-height: 30px;
+            color: #A7A88C;
+            padding-left: 10px;
+        }
+
+        .send-mess {
+            position: fixed;
+            z-index: 99;
+            bottom: 0;
+            width: 100%;
+            height: 40px;
+            display: flex;
+            background: rgb(141, 53, 172, .3);
+        }
+
+        .send-mess input {
+            flex: 8;
+            height: 100%;
+            border-radius: 8px;
+            outline: none;
+            border: none;
+        }
+
+        .send-mess div {
+            flex: 2;
+            height: 100%;
+            line-height: 40px;
+            color: #fff;
+            text-align: center;
+            background-color: #458A43;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>这是一个静态页面托管页</h1>
+    <div class="mess-container">
+        <div class="item">aaaaa</div>
+        <div class="item">aaaaa</div>
+        <div class="item">aaaaa</div>
+        <div class="item">aaaaa</div>
+        <div class="item">aaaaa</div>
+        <div class="item">aaaaa</div>
+        <div class="item">aaaaa</div>
+    </div>
+    <div class="send-mess">
+        <input type="text" id="">
+        <div id="mess">发言</div>
+    </div>
+    <button id="over">断开</button>
     <script src="https://cdn.bootcss.com/socket.io/2.1.1/socket.io.js"></script>
     <script>
-       let socket = io();
-       socket.on('news',function(data){
-           console.log(data);
-       })
+        /* 
+        实现聊天框的逻辑点：
+            前端：
+            1、用后台返回的数据，判断 发言的 表现
+            2、前端 存储 数据的结构就数组
+
+            后端：
+            1、获取当前 连接 服务器的 总人数，以及对应的用户信息
+            2、识别 用户发话是 自己 还是他人；
+            3、广播的范围 是 所有人 还是区别对待
+            4、退出页面 就关闭 连接；
+        */
+    </script>
+    <script>
+        let mess = document.getElementById("mess");
+        let over = document.getElementById("over");
+        let socket = io.connect();
+        console.log(socket);
+        socket.on("c_hello", (data) => {
+            alert(`${socket.id}:${data}`);
+        });
+        socket.on("welcome", (data) => {
+            console.log(data);
+        });
+        socket.on("an event",data=>{
+            console.log(data);
+        });
+        window.onload = () => {
+            mess.addEventListener("click", () => {
+                socket.emit("hello", "hello");
+            });
+            over.addEventListener("click", () => {
+                // socket.emit("over","cancel");
+                socket.disconnect();
+            });
+        }
+
     </script>
 </body>
 

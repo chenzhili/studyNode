@@ -34,9 +34,17 @@ const io = require("socket.io").listen(server);
  */
 
 app.use(express.static(path.join(__dirname, "www")));
-
 io.on("connection", (socket) => {
-    socket.emit("news", { hello: "aaaaaa" });
+    io.local.emit('an event', "这是什么用");
+    io.sockets.emit("welcome","欢迎进入");
+    socket.on("hello",(data)=>{
+        socket.emit("c_hello",`收到了${data}`);
+        
+    });
+    
+    socket.on("disconnect",()=>{
+        console.log(socket.id+":断开");
+    });
 })
 app.use("/index/aa.html", (req, res) => {
     res.send("这种监听接口行不");
