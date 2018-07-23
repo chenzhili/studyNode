@@ -32,19 +32,37 @@ const io = require("socket.io").listen(server);
 
   
  */
+//type标识当前的说话类型：0 标识某人进来,1标识发言
+// 数据结构：
+/* 
+    {
+        id,type,mess
+    }
+*/
 
 app.use(express.static(path.join(__dirname, "www")));
 io.on("connection", (socket) => {
-    io.local.emit('an event', "这是什么用");
-    io.sockets.emit("welcome","欢迎进入");
-    socket.on("hello",(data)=>{
-        socket.emit("c_hello",`收到了${data}`);
+    // console.log(socket.id);
+    io.local.emit('welcome', {
+        mess:`欢迎${socket.id}进入聊天室`,
+        type:0
+    });
+    socket.on("chat",data=>{
+        console.log(data);
+        io.sockets.emit("chat",{
+            ...data,
+            type:1
+        });
+    });
+    // io.sockets.emit("welcome","欢迎进入");
+    // socket.on("hello",(data)=>{
+    //     socket.emit("c_hello",`收到了${data}`);
         
-    });
+    // });
     
-    socket.on("disconnect",()=>{
-        console.log(socket.id+":断开");
-    });
+    // socket.on("disconnect",()=>{
+    //     console.log(socket.id+":断开");
+    // });
 })
 app.use("/index/aa.html", (req, res) => {
     res.send("这种监听接口行不");

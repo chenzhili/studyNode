@@ -22,6 +22,7 @@
             width: 100%;
             background: rgba(82, 146, 249, .3);
             overflow: scroll;
+            font-size: 14px;
         }
 
         .item {
@@ -56,24 +57,88 @@
             text-align: center;
             background-color: #458A43;
         }
+
+        /* 聊天项 */
+
+        .welcome {
+            width: 70%;
+            margin: 10px auto;
+            line-height: 24px;
+            text-align: center;
+            background: rgba(0, 0, 0, .2);
+            color: #fff;
+        }
+
+        .another {
+            margin: 10px 0 10px 10px;
+        }
+
+        .avator {
+            display: inline-block;
+            vertical-align: middle;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #ff0;
+        }
+
+        .user-text {
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 2px;
+            line-height: 24px;
+            background: rgba(0, 0, 0, .2);
+            color: #fff;
+            padding: 0 24px;
+            font-size: 12px;
+            text-align: left;
+        }
+
+        .myself {
+            margin: 10px 10px 10px 0;
+        }
+
+        .myself-avator {
+            float: right;
+
+        }
+
+        .myself:after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+
+        .myslef-user {
+            float: right;
+            margin: 8px 2px 0 0;
+        }
     </style>
 </head>
 
 <body>
     <div class="mess-container">
-        <div class="item">aaaaa</div>
-        <div class="item">aaaaa</div>
-        <div class="item">aaaaa</div>
-        <div class="item">aaaaa</div>
-        <div class="item">aaaaa</div>
-        <div class="item">aaaaa</div>
-        <div class="item">aaaaa</div>
+        <!-- <div class="welcome">
+            欢迎 dswddsd 进入聊天
+        </div>
+        <div class="another">
+            <div class="avator"></div>
+            <div class="user-text">
+                hello 播音
+            </div>
+        </div>
+        <div class="myself">
+            <div class="myself-avator avator"></div>
+            <div class="myslef-user user-text">
+                hello 播音
+            </div>
+        </div> -->
     </div>
     <div class="send-mess">
-        <input type="text" id="">
+        <input type="text" id="input">
         <div id="mess">发言</div>
     </div>
-    <button id="over">断开</button>
+    <!-- <button id="over">断开</button> -->
     <script src="https://cdn.bootcss.com/socket.io/2.1.1/socket.io.js"></script>
     <script>
         /* 
@@ -90,29 +155,72 @@
         */
     </script>
     <script>
-        let mess = document.getElementById("mess");
+        let chat = document.getElementById("mess");
         let over = document.getElementById("over");
+        let container = document.querySelectorAll(".mess-container")[0];
+        let input = document.getElementById("input");
         let socket = io.connect();
-        console.log(socket);
-        socket.on("c_hello", (data) => {
-            alert(`${socket.id}:${data}`);
-        });
-        socket.on("welcome", (data) => {
-            console.log(data);
-        });
-        socket.on("an event",data=>{
-            console.log(data);
-        });
-        window.onload = () => {
-            mess.addEventListener("click", () => {
-                socket.emit("hello", "hello");
-            });
-            over.addEventListener("click", () => {
-                // socket.emit("over","cancel");
-                socket.disconnect();
+        const messData = [];
+
+        // 随机颜色
+        let radColor = parseInt(Math.random * 251);
+        let recieveMess = function (mess) {
+            socket.on(mess, data => {
+                console.log(data);
+                messData.push(data);
+                let fragement = document.createDocumentFragment();
+                let { type, id, mess } = data;
+                let childNode;
+                switch (type) {
+                    case 0:
+                        childNode = createEle({ classname: "welcome", mess }, 0);
+                        break;
+                    case 1:
+                        if (id === socket.id) {
+                            childNode = createEle({ classname: "myself", mess: "" }, 1, { classname: "myself-avator avator", mess: "" }, {
+                                classname: "myslef-user user-text", mess
+                            });
+                        } else {
+                            childNode = createEle({ classname: "another", mess: "" }, 1, { classname: "avator", mess: "" }, {
+                                classname: "user-text", mess
+                            });
+                        }
+                        break;
+                }
+                // fragement.appendChild(childNode);
+                container.appendChild(childNode);
             });
         }
-
+        // 创建 子节点
+        function createEle({ classname, mess }, isHaving, ...childClass) {
+            let div = document.createElement("div");
+            div.className = classname;
+            mess && (div.innerHTML = mess);
+            if (isHaving && childClass.length) {
+                childClass.forEach(v => {
+                    div.appendChild(createEle(v, false));
+                });
+            }
+            return div;
+        }
+        recieveMess("welcome");
+        recieveMess("chat");
+        window.onload = () => {
+            chat.addEventListener("click", () => {
+                socket.emit("chat", { mess: input.value, id: socket.id });
+                input.value = "";
+            });
+            document.addEventListener("keypress", (e) => {
+                if (input.value && e.keyCode == 13) {
+                    socket.emit("chat", { mess: input.value, id: socket.id });
+                    input.value = "";
+                }
+            });
+            /* over.addEventListener("click", () => {
+                // socket.emit("over","cancel");
+                socket.disconnect();
+            }); */
+        }
     </script>
 </body>
 
