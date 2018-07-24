@@ -1,0 +1,19 @@
+html
+    head
+        meta
+        style
+    body
+        div.test
+        div&attributes({a:1,b:2,c:3})
+        //- 协变量
+        div.
+            a
+        div(class=["a1","a2"])
+        div(style={a:1,b:2,c:3})
+        -let a =1
+        -let b =2
+        div 结果是：#{a+b}
+        span=test
+        - arr =[2,2,4,5,6]
+        -for(var i=0;i<arr.length;i++)
+            div=arr[i]
