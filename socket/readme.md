@@ -23,5 +23,5 @@ io.sockets.emit('message', "this is a test");
 // sending to all clients in 'game' room(channel), include sender
 io.sockets.in('game').emit('message', 'cool game');
  
-// sending to individual socketid
+// sending to individual socketid（这个好像废弃了）
 io.sockets.socket(socketid).emit('message', 'for your eyes only');
