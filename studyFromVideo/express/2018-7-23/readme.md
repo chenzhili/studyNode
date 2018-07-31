@@ -12,4 +12,6 @@ jade中的注意点
     = :表示可以给 标签的 内容直接 加 内容 span=a
     include :表示 可以 像 引用模块一样引用文件 如：include ./includes/head.jade
 
-    循环：
+    循环：见jade 
+2018/7/31
+    对于富文本 内容想要 不编译输出 就用 !

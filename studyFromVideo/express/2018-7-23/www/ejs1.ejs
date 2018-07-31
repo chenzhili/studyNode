@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <%= name %> 
+    </div>
+    <% for(let i=0;i<arr.length;i++){ %>
+        <div><%= arr[i] %></div>
+    <% } %>
+    <% arr.forEach(v=>{ %>
+        <div><%= v %></div>
+    <% }) %>
+    <!-- 在 <%= %> 就是 直接输出-->
+    <!-- 在 <%- %> 就是 转义输出，特别对于 富文本-->
+    <% let a = "<div>测试</div>" %>
+    <%= a %>
+    <%- a %>
+    <!-- 也有 include 引用 外部文件 -->
+    <% if(admin){ %>
+        <% include ./include_ejs_admin.txt %>
+    <% }else{ %>
+        
+    <% } %>
+</body>
+</html>
