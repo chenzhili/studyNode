@@ -25,3 +25,4 @@ io.sockets.in('game').emit('message', 'cool game');
  
 // sending to individual socketid（这个好像废弃了）
 io.sockets.socket(socketid).emit('message', 'for your eyes only');
+<!-- test -->
